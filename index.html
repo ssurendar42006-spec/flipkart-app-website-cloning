@@ -1,57 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Flipkart Clone</title>
-
-    <!-- IMPORTANT: Correct CSS Link -->
-    <link rel="stylesheet" href="./main.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CSV Data Visualizer</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
 </head>
 <body>
+  <h1>📈 CSV Data Visualizer</h1>
+  <input type="file" id="csvFile" accept=".csv" />
+  <br><br>
+  <canvas id="chart"></canvas>
 
-    <header class="navbar">
-        <div class="logo">Flipkart</div>
+  <script>
+    document.getElementById('csvFile').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
 
-        <input type="text" class="search" placeholder="Search for products">
+      Papa.parse(file, {
+        header: true,
+        dynamicTyping: true,
+        complete: function(results) {
+          const data = results.data;
+          const labels = data.map(row => row["Product"]);
+          const values = data.map(row => row["Sales"]);
 
-        <div class="nav-links">
-            <a href="#">Login</a>
-            <a href="#">Cart</a>
-        </div>
-    </header>
-
-    <section class="categories">
-        <div>Mobiles</div>
-        <div>Fashion</div>
-        <div>Electronics</div>
-        <div>Home</div>
-    </section>
-
-    <section class="banner">
-        <h2>Big Sale</h2>
-        <p>Up to 70% Off</p>
-    </section>
-
-    <section class="products">
-        <div class="product-card">
-            <img src="https://via.placeholder.com/150">
-            <h3>Mobile</h3>
-            <p>₹10,000</p>
-            <button>Add to Cart</button>
-        </div>
-
-        <div class="product-card">
-            <img src="https://via.placeholder.com/150">
-            <h3>Laptop</h3>
-            <p>₹45,000</p>
-            <button>Add to Cart</button>
-        </div>
-    </section>
-
-    <footer class="footer">
-        © 2026 Flipkart Clone
-    </footer>
-
+          const ctx = document.getElementById('chart').getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Sales by Product',
+                data: values,
+                backgroundColor: 'rgba(255, 205, 86, 0.8)',
+                borderColor: '#333',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        }
+      });
+    });
+  </script>
 </body>
-</html>
-
+      
